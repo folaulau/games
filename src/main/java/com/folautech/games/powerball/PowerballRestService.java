@@ -25,17 +25,12 @@ public class PowerballRestService {
         int perWeek = 3;
         int perMonth = perWeek * 4;
         int perYr = (perMonth * 12) /perPage;
-        int numOfPages = (int)(perYr * 5);
+        int numOfPages = (int)(perYr * 8);
         List<PowerballResult> powerballResults = powerballRestService.getPreviousResults(numOfPages);
 
-        System.out.println("Size: "+powerballResults.size());
+        System.out.println("Number of Drawings: "+powerballResults.size());
 
         System.out.println("From: "+powerballResults.get(powerballResults.size()-1).getDate().toString() +" to "+powerballResults.get(0).getDate().toString() );
-
-//        for(PowerballResult powerballResult: powerballResults){
-//            System.out.println("Powerball: "+powerballResult.getPowerball()+", balls: "+powerballResult.getBalls());
-//
-//        }
 
         Map<Integer, Integer> powerballCounts = new HashMap<>();
         Map<Integer, Integer> ballCounts = new HashMap<>();
@@ -64,10 +59,6 @@ public class PowerballRestService {
             }
         }
 
-//        for(Integer powerball : powerballCounts.keySet()){
-//            System.out.println("Powerball: " + powerball+ ", Count: " + powerballCounts.get(powerball));
-//        }
-
         powerballCounts.entrySet().stream()
                 .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed()) // Sort by value, descending
                 .forEach(entry -> System.out.println("Powerball: " + entry.getKey() + ", Count: " + entry.getValue()));
@@ -76,11 +67,6 @@ public class PowerballRestService {
                 .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed()) // Sort by value, descending
                 .forEach(entry -> System.out.println("Ball: " + entry.getKey() + ", Count: " + entry.getValue()));
 
-
-
-//        ballCounts.entrySet().stream()
-//                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed()) // Sort by value, descending
-//                .forEach(entry -> System.out.println("Ball: " + entry.getKey() + ", Count: " + entry.getValue()));
     }
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, MMM d, yyyy", Locale.ENGLISH);
@@ -97,7 +83,7 @@ public class PowerballRestService {
 
         int pageNumber = 1;
 
-        System.out.println("loading results...");
+        System.out.println("loading results for "+numberOfPages+" pages...");
 
         while (numberOfPages >= 0) {
 
