@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 @NoArgsConstructor
@@ -53,5 +54,17 @@ public class PowerballResult implements Serializable {
             this.balls = new ArrayList<>();
         }
         this.balls.add(ball);
+    }
+
+    public String getObjectAsString(){
+        String result = balls.stream()
+            .map(String::valueOf)
+            .collect(Collectors.joining(","));
+
+        result += (","+powerball);
+
+        result += (","+date.toString());
+
+        return result;
     }
 }

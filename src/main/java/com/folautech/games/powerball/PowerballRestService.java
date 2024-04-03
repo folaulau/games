@@ -12,6 +12,8 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -28,45 +30,57 @@ public class PowerballRestService {
         int numOfPages = (int)(perYr * 8);
         List<PowerballResult> powerballResults = powerballRestService.getPreviousResults(numOfPages);
 
-        System.out.println("Number of Drawings: "+powerballResults.size());
+        System.out.println("Number of Drawings: " + powerballResults.size());
 
-        System.out.println("From: "+powerballResults.get(powerballResults.size()-1).getDate().toString() +" to "+powerballResults.get(0).getDate().toString() );
-
-        Map<Integer, Integer> powerballCounts = new HashMap<>();
-        Map<Integer, Integer> ballCounts = new HashMap<>();
+        System.out.println("From: " + powerballResults.get(powerballResults.size() - 1).getDate().toString() + " to "
+            + powerballResults.get(0).getDate().toString());
 
         for(PowerballResult powerballResult: powerballResults){
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("powerball_winning_numbers.txt"))) {
 
-            int powerball = powerballResult.getPowerball();
-            Integer powerballCount = powerballCounts.get(powerball);
-
-            if(powerballCount!=null){
-                powerballCounts.put(powerball, powerballCount+1);
-            }else{
-                powerballCounts.put(powerball,1);
-            }
-
-            List<Integer> balls = powerballResult.getBalls();
-
-            for(Integer ball : balls){
-                Integer ballCount = ballCounts.get(ball);
-                if(ballCount != null){
-                    ballCounts.put(ball, ballCount+1);
-                }else{
-                    ballCounts.put(ball,1);
-                }
-
+                writer.write(powerballResult.getObjectAsString());
+                writer.newLine(); // Adds a newline character
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
-        powerballCounts.entrySet().stream()
-                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed()) // Sort by value, descending
-                .forEach(entry -> System.out.println("Powerball: " + entry.getKey() + ", Count: " + entry.getValue()));
 
-        ballCounts.entrySet().stream()
-                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed()) // Sort by value, descending
-                .forEach(entry -> System.out.println("Ball: " + entry.getKey() + ", Count: " + entry.getValue()));
-
+//        Map<Integer, Integer> powerballCounts = new HashMap<>();
+//        Map<Integer, Integer> ballCounts = new HashMap<>();
+//
+//        for(PowerballResult powerballResult: powerballResults){
+//
+//            int powerball = powerballResult.getPowerball();
+//            Integer powerballCount = powerballCounts.get(powerball);
+//
+//            if(powerballCount!=null){
+//                powerballCounts.put(powerball, powerballCount+1);
+//            }else{
+//                powerballCounts.put(powerball,1);
+//            }
+//
+//            List<Integer> balls = powerballResult.getBalls();
+//
+//            for(Integer ball : balls){
+//                Integer ballCount = ballCounts.get(ball);
+//                if(ballCount != null){
+//                    ballCounts.put(ball, ballCount+1);
+//                }else{
+//                    ballCounts.put(ball,1);
+//                }
+//
+//            }
+//        }
+//
+//        powerballCounts.entrySet().stream()
+//                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed()) // Sort by value, descending
+//                .forEach(entry -> System.out.println("Powerball: " + entry.getKey() + ", Count: " + entry.getValue()));
+//
+//        ballCounts.entrySet().stream()
+//                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed()) // Sort by value, descending
+//                .forEach(entry -> System.out.println("Ball: " + entry.getKey() + ", Count: " + entry.getValue()));
+        System.out.println("done loading results");
     }
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, MMM d, yyyy", Locale.ENGLISH);
@@ -108,6 +122,7 @@ public class PowerballRestService {
             }
 
             if (docCustomConn == null) {
+                System.out.println("docCustomConn is null");
                 break;
             }
 
@@ -115,12 +130,12 @@ public class PowerballRestService {
 
             int count = 0;
             for (Element dateElement : dateElements) {
-//                System.out.println("Date: " + dateElement.text());
+                System.out.println("Date: " + dateElement.text());
 
                 PowerballResult powerballResult = new PowerballResult();
 
                 LocalDate date = LocalDate.parse(dateElement.text(), formatter);
-//                System.out.println("LocalDate: " + date);
+                System.out.println("LocalDate: " + date);
 
                 powerballResult.setDate(date);
 
@@ -131,9 +146,9 @@ public class PowerballRestService {
 
                     powerballResult.setPowerball(Integer.parseInt(powerball.text()));
 
-//                    System.out.print("Powerball Numbers: ");
+                    System.out.print("Powerball Numbers: ");
                     for (Element number : powerballNumbers) {
-//                        System.out.print(number.text() + " ");
+                        System.out.print(number.text() + " ");
 
                         powerballResult.addBall(Integer.parseInt(number.text()));
 
