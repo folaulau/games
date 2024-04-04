@@ -26,23 +26,24 @@ public class PowerballRestService {
         int perPage = 30;
         int perWeek = 3;
         int perMonth = perWeek * 4;
-        int perYr = (perMonth * 12) /perPage;
-        int numOfPages = (int)(perYr * 8);
+        int perYr = (perMonth * 12) / perPage;
+        int numOfPages = (int) (perYr * 8);
         List<PowerballResult> powerballResults = powerballRestService.getPreviousResults(numOfPages);
 
         System.out.println("Number of Drawings: " + powerballResults.size());
 
         System.out.println("From: " + powerballResults.get(powerballResults.size() - 1).getDate().toString() + " to "
-            + powerballResults.get(0).getDate().toString());
+                + powerballResults.get(0).getDate().toString());
 
-        for(PowerballResult powerballResult: powerballResults){
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("powerball_winning_numbers.txt"))) {
 
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("powerball_winning_numbers.txt"))) {
+            for (int i = 0; i < powerballResults.size(); i++) {
+                PowerballResult powerballResult = powerballResults.get(i);
                 writer.write(powerballResult.getObjectAsString());
                 writer.newLine(); // Adds a newline character
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
 
@@ -85,11 +86,11 @@ public class PowerballRestService {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, MMM d, yyyy", Locale.ENGLISH);
 
-    public PowerballRestService(){
+    public PowerballRestService() {
     }
 
 
-    public List<PowerballResult> getPreviousResults(int numberOfPages){
+    public List<PowerballResult> getPreviousResults(int numberOfPages) {
 
         Document docCustomConn = null;
 
@@ -97,13 +98,13 @@ public class PowerballRestService {
 
         int pageNumber = 1;
 
-        System.out.println("loading results for "+numberOfPages+" pages...");
+        System.out.println("loading results for " + numberOfPages + " pages...");
 
         while (numberOfPages >= 0) {
 
             StringBuilder url = new StringBuilder("https://www.powerball.com/previous-results");
             url.append("?gc=powerball");
-            url.append("&pg="+pageNumber);
+            url.append("&pg=" + pageNumber);
 
             try {
 //            Document doc = Jsoup.connect(url.toString()).get();
@@ -117,8 +118,8 @@ public class PowerballRestService {
                 connection.header("headersecurity", "xyz123");
                 docCustomConn = connection.get();
             } catch (IOException e) {
-               System.err.println("IOException, msg: "+e.getLocalizedMessage());
-               break;
+                System.err.println("IOException, msg: " + e.getLocalizedMessage());
+                break;
             }
 
             if (docCustomConn == null) {
@@ -130,12 +131,12 @@ public class PowerballRestService {
 
             int count = 0;
             for (Element dateElement : dateElements) {
-                System.out.println("Date: " + dateElement.text());
+//                System.out.println("Date: " + dateElement.text());
 
                 PowerballResult powerballResult = new PowerballResult();
 
                 LocalDate date = LocalDate.parse(dateElement.text(), formatter);
-                System.out.println("LocalDate: " + date);
+//                System.out.println("LocalDate: " + date);
 
                 powerballResult.setDate(date);
 
@@ -146,9 +147,9 @@ public class PowerballRestService {
 
                     powerballResult.setPowerball(Integer.parseInt(powerball.text()));
 
-                    System.out.print("Powerball Numbers: ");
+//                    System.out.print("Powerball Numbers: ");
                     for (Element number : powerballNumbers) {
-                        System.out.print(number.text() + " ");
+//                        System.out.print(number.text() + " ");
 
                         powerballResult.addBall(Integer.parseInt(number.text()));
 
