@@ -135,7 +135,7 @@ public class GeneratePowerballTickets {
             int nextBall = 0;
 
             if(useHistoryData){
-                nextBall = historyWhiteBalls.get(rand.nextInt(historyWhiteBalls.size()) + 1);
+                nextBall = historyWhiteBalls.get(rand.nextInt(historyWhiteBalls.size()));
             }else{
                 nextBall = rand.nextInt(MAX_WHITE_BALL) + 1;
             }
@@ -156,7 +156,7 @@ public class GeneratePowerballTickets {
         while(true){
             int powerBall = 0;
             if(useHistoryData){
-                powerBall = historyPowerBalls.get(rand.nextInt(historyPowerBalls.size()) + 1);
+                powerBall = historyPowerBalls.get(rand.nextInt(historyPowerBalls.size()));
             }else{
                 powerBall = rand.nextInt(MAX_RED_BALL) + 1;
             }
