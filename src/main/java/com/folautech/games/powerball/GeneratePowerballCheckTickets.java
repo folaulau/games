@@ -54,9 +54,9 @@ public class GeneratePowerballCheckTickets {
         Scanner scanner = new Scanner(System.in);;
 
         System.out.println("Input your tickets like this(18, 19, 25, 40, 64, 14) with powerball as last number:");
-        String powerBallWinningTicket = scanner.nextLine().trim().toLowerCase();
+        String drawwerPowerBallTicket = scanner.nextLine().trim().toLowerCase();
 
-        String[] parts = powerBallWinningTicket.split(",");
+        String[] parts = drawwerPowerBallTicket.split(",");
         // Assuming the first 5 numbers are balls, the 6th is the powerball, and the 7th is the date
         List<Integer> balls = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
@@ -77,7 +77,7 @@ public class GeneratePowerballCheckTickets {
 
             total += yourPrize;
 
-            System.out.println("\nYour Prize = $" + yourPrize);
+            System.out.println("Your Prize = $" + yourPrize+"\n");
         }
 
         System.out.println("\nYour Total Prize = $" + total);
