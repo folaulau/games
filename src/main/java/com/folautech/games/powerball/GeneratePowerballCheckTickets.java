@@ -9,22 +9,7 @@ import java.util.stream.Collectors;
 
 public class GeneratePowerballCheckTickets {
 
-    private static final int    MAX_WHITE_BALL   = 69;
-    private static final int    MAX_RED_BALL     = 26;
-    private static final int    WHITE_BALL_COUNT = 5;
-
     private static final double GRAND_PRIZE      = 10000000.0;
-
-    private static List<Integer> historyWhiteBalls = new ArrayList<>();
-
-    private static List<Integer> generatedWhiteBalls = new ArrayList<>();
-    private static List<Integer> historyPowerBalls = new ArrayList<>();
-
-    private static List<Integer> generatedPowerBalls = new ArrayList<>();
-
-    private static boolean useHistoryData = false;
-
-    private static int numberOfTickets = 0;
 
     public static void main(String[] args) {
 
@@ -100,27 +85,30 @@ public class GeneratePowerballCheckTickets {
 
         }
 
-        System.out.println("powerBallWinner: "+powerBallWinner+", ticketWinningBalls: "+ticketWinningBalls);
+        System.out.println("powerBallWinner: "+powerBallWinner+", number of Winning Balls: "+ticketWinningBalls);
 
 
         if (powerBallWinner && ticketWinningBalls == 5) {
             return GRAND_PRIZE;
         }
-
+        // $1M
         if (powerBallWinner == false && ticketWinningBalls == 5) {
             return 1000000.0;
         }
 
+        // $50K
         if (powerBallWinner && ticketWinningBalls == 4) {
             return 50000.0;
         }
 
+        // $100
         if (powerBallWinner == false && ticketWinningBalls == 4) {
             return 100.0;
         }
 
+        // $100
         if (powerBallWinner && ticketWinningBalls == 3) {
-            return 1000.0;
+            return 100.0;
         }
 
         if (powerBallWinner == false && ticketWinningBalls == 3) {
