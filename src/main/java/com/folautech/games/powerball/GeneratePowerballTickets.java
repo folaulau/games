@@ -25,6 +25,8 @@ public class GeneratePowerballTickets {
 
     private static boolean useHistoryData = false;
 
+    private static int numberOfTickets = 0;
+
     public static void main(String[] args) {
 
         List<PowerballResult> powerballResults = new ArrayList<>();
@@ -104,7 +106,7 @@ public class GeneratePowerballTickets {
         Scanner scanner = new Scanner(System.in);;
 
         System.out.println("How many tickets?");
-        int numberOfTickets = Integer.parseInt(scanner.nextLine().trim());
+        numberOfTickets = Integer.parseInt(scanner.nextLine().trim());
 
         System.out.println("Do you want to use history data? (y/n)");
         String historyData = scanner.nextLine().trim().toLowerCase();
@@ -135,11 +137,12 @@ public class GeneratePowerballTickets {
             int nextBall = 0;
 
             if(useHistoryData){
+
                 nextBall = historyWhiteBalls.get(rand.nextInt(historyWhiteBalls.size()));
+
             }else{
                 nextBall = rand.nextInt(MAX_WHITE_BALL) + 1;
             }
-
 
             if(!whiteBalls.contains(nextBall) && !generatedWhiteBalls.contains(nextBall)){
                 whiteBalls.add(nextBall);
@@ -156,15 +159,23 @@ public class GeneratePowerballTickets {
         while(true){
             int powerBall = 0;
             if(useHistoryData){
-                powerBall = historyPowerBalls.get(rand.nextInt(historyPowerBalls.size()));
+
+                if(numberOfTickets > 0 && numberOfTickets <= 26){
+                    powerBall = historyPowerBalls.get(rand.nextInt(numberOfTickets));
+                }else{
+                    powerBall = historyPowerBalls.get(rand.nextInt(MAX_RED_BALL));
+                }
+
             }else{
-                powerBall = rand.nextInt(MAX_RED_BALL) + 1;
+                powerBall = rand.nextInt(MAX_RED_BALL)+1;
             }
 
             if(!generatedPowerBalls.contains(powerBall)){
                 generatedPowerBalls.add(powerBall);
                 return powerBall;
             }
+
+//            return powerBall;
         }
     }
 

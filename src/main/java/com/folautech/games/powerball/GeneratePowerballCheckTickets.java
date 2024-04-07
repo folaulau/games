@@ -1,0 +1,145 @@
+package com.folautech.games.powerball;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class GeneratePowerballCheckTickets {
+
+    private static final int    MAX_WHITE_BALL   = 69;
+    private static final int    MAX_RED_BALL     = 26;
+    private static final int    WHITE_BALL_COUNT = 5;
+
+    private static final double GRAND_PRIZE      = 10000000.0;
+
+    private static List<Integer> historyWhiteBalls = new ArrayList<>();
+
+    private static List<Integer> generatedWhiteBalls = new ArrayList<>();
+    private static List<Integer> historyPowerBalls = new ArrayList<>();
+
+    private static List<Integer> generatedPowerBalls = new ArrayList<>();
+
+    private static boolean useHistoryData = false;
+
+    private static int numberOfTickets = 0;
+
+    public static void main(String[] args) {
+
+        List<PowerballResult> powerballResults = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("powerball_ticket_numbers.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                // Assuming the first 5 numbers are balls, the 6th is the powerball, and the 7th is the date
+                List<Integer> balls = new ArrayList<>();
+                for (int i = 0; i < 5; i++) {
+                    balls.add(Integer.parseInt(parts[i].trim()));
+                }
+                int powerball = Integer.parseInt(parts[5].trim());
+
+                PowerballResult powerballResult = new PowerballResult();
+                powerballResult.setPowerball(powerball);
+                powerballResult.setBalls(balls);
+
+                powerballResults.add(powerballResult);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Scanner scanner = new Scanner(System.in);;
+
+        System.out.println("Input your tickets like this(18, 19, 25, 40, 64, 14) with powerball as last number:");
+        String powerBallWinningTicket = scanner.nextLine().trim().toLowerCase();
+
+        String[] parts = powerBallWinningTicket.split(",");
+        // Assuming the first 5 numbers are balls, the 6th is the powerball, and the 7th is the date
+        List<Integer> balls = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            balls.add(Integer.parseInt(parts[i].trim()));
+        }
+        int powerball = Integer.parseInt(parts[5].trim());
+
+        PowerballResult drawwerPowerballResult = new PowerballResult();
+        drawwerPowerballResult.setPowerball(powerball);
+        drawwerPowerballResult.setBalls(balls);
+
+        double total = 0;
+
+        for (PowerballResult powerballResult : powerballResults){
+            System.out.println(powerballResult);
+
+            double yourPrize = getPrize(drawwerPowerballResult, powerballResult);
+
+            total += yourPrize;
+
+            System.out.println("\nYour Prize = $" + yourPrize);
+        }
+
+        System.out.println("\nYour Total Prize = $" + total);
+
+    }
+
+    private static Double getPrize(PowerballResult drawwerPowerballResult, PowerballResult ticket) {
+
+        boolean powerBallWinner = drawwerPowerballResult.getPowerball() == ticket.getPowerball();
+
+        List<Integer> drawwerBalls = drawwerPowerballResult.getBalls();
+
+        int ticketWinningBalls = 0;
+
+        for(Integer ball : drawwerBalls){
+
+            if(ticket.getBalls().contains(ball)){
+                ticketWinningBalls ++;
+            }
+
+        }
+
+        System.out.println("powerBallWinner: "+powerBallWinner+", ticketWinningBalls: "+ticketWinningBalls);
+
+
+        if (powerBallWinner && ticketWinningBalls == 5) {
+            return GRAND_PRIZE;
+        }
+
+        if (powerBallWinner == false && ticketWinningBalls == 5) {
+            return 1000000.0;
+        }
+
+        if (powerBallWinner && ticketWinningBalls == 4) {
+            return 50000.0;
+        }
+
+        if (powerBallWinner == false && ticketWinningBalls == 4) {
+            return 100.0;
+        }
+
+        if (powerBallWinner && ticketWinningBalls == 3) {
+            return 1000.0;
+        }
+
+        if (powerBallWinner == false && ticketWinningBalls == 3) {
+            return 7.0;
+        }
+
+        if (powerBallWinner && ticketWinningBalls == 2) {
+            return 7.0;
+        }
+
+        if (powerBallWinner && ticketWinningBalls == 1) {
+            return 4.0;
+        }
+
+        if (powerBallWinner) {
+            return 4.0;
+        }
+
+        return 0.0;
+    }
+
+}
