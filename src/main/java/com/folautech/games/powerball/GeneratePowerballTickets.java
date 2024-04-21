@@ -81,7 +81,7 @@ public class GeneratePowerballTickets {
             }
         }
 
-        //        ballCounts.entrySet().stream()
+//                ballCounts.entrySet().stream()
 //                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed()) // Sort by value, descending
 //                .forEach(entry -> System.out.println("Ball: " + entry.getKey() + ", Count: " + entry.getValue()));
 
@@ -138,10 +138,10 @@ public class GeneratePowerballTickets {
 
             if(useHistoryData){
 
-                nextBall = historyWhiteBalls.get(rand.nextInt(historyWhiteBalls.size()));
+                nextBall = historyWhiteBalls.get(rand.nextInt(0, historyWhiteBalls.size()));
 
             }else{
-                nextBall = rand.nextInt(MAX_WHITE_BALL) + 1;
+                nextBall = rand.nextInt(1, MAX_WHITE_BALL+1);
             }
 
             if(!whiteBalls.contains(nextBall) && !generatedWhiteBalls.contains(nextBall)){
@@ -160,14 +160,17 @@ public class GeneratePowerballTickets {
             int powerBall = 0;
             if(useHistoryData){
 
-                if(numberOfTickets > 0 && numberOfTickets <= 26){
-                    powerBall = historyPowerBalls.get(rand.nextInt(numberOfTickets));
+                if(numberOfTickets > 0 && numberOfTickets <= 5) {
+                    powerBall = historyPowerBalls.get(rand.nextInt(0, numberOfTickets + 10));
+
+                }else if(numberOfTickets > 5 && numberOfTickets <= 26){
+                    powerBall = historyPowerBalls.get(rand.nextInt(0, MAX_RED_BALL));
                 }else{
-                    powerBall = historyPowerBalls.get(rand.nextInt(MAX_RED_BALL));
+                    powerBall = historyPowerBalls.get(rand.nextInt(0, MAX_RED_BALL));
                 }
 
             }else{
-                powerBall = rand.nextInt(MAX_RED_BALL)+1;
+                powerBall = rand.nextInt(1, MAX_RED_BALL+1);
             }
 
             if(!generatedPowerBalls.contains(powerBall)){
