@@ -3,17 +3,15 @@ package com.folautech.games.powerball;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class GeneratePowerballCheckTickets {
+public class PowerballCheckTickets {
 
     private static final double GRAND_PRIZE      = 10000000.0;
 
     public static void main(String[] args) {
 
-        List<PowerballResult> powerballResults = new ArrayList<>();
+        List<PowerballResult> yourPowerBallTickets = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader("powerball_ticket_numbers.txt"))) {
             String line;
@@ -30,15 +28,15 @@ public class GeneratePowerballCheckTickets {
                 powerballResult.setPowerball(powerball);
                 powerballResult.setBalls(balls);
 
-                powerballResults.add(powerballResult);
+                yourPowerBallTickets.add(powerballResult);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        Scanner scanner = new Scanner(System.in);;
+        Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Input your tickets like this(18, 19, 25, 40, 64, 14) with powerball as last number:");
+        System.out.println("Input the drawer ticket like this(18, 19, 25, 40, 64, 14) with powerball being the last number:");
         String drawwerPowerBallTicket = scanner.nextLine().trim().toLowerCase();
 
         String[] parts = drawwerPowerBallTicket.split(",");
@@ -55,10 +53,10 @@ public class GeneratePowerballCheckTickets {
 
         double total = 0;
 
-        for (PowerballResult powerballResult : powerballResults){
-            System.out.println(powerballResult);
+        for (PowerballResult yourPowerballTicket : yourPowerBallTickets){
+            System.out.println(yourPowerballTicket);
 
-            double yourPrize = getPrize(drawwerPowerballResult, powerballResult);
+            double yourPrize = getPrize(drawwerPowerballResult, yourPowerballTicket);
 
             total += yourPrize;
 

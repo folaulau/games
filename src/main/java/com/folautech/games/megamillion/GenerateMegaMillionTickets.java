@@ -33,7 +33,6 @@ public class GenerateMegaMillionTickets {
 
         List<MegaMillionResult> megaMillionResults = new ArrayList<>();
 
-
         Map<Integer, Integer> megaballCounts = new HashMap<>();
         Map<Integer, Integer> ballCounts = new HashMap<>();
 

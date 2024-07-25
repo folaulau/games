@@ -1,5 +1,13 @@
 package com.folautech.games.powerball;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.folautech.games.megamillion.MegaMillionResponse;
+import com.folautech.games.megamillion.MegaMillionResult;
+import com.folautech.games.megamillion.MegaMillionResults;
 import com.folautech.games.utils.HttpRequestInterceptor;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -23,28 +31,30 @@ public class PowerballRestService {
 
     public static void main(String[] args) {
         PowerballRestService powerballRestService = new PowerballRestService();
-        int perPage = 30;
-        int perWeek = 3;
-        int perMonth = perWeek * 4;
-        int perYr = (perMonth * 12) / perPage;
-        int numOfPages = (int) (perYr * 8);
-        List<PowerballResult> powerballResults = powerballRestService.getPreviousResults(numOfPages);
+//        int perPage = 30;
+//        int perWeek = 3;
+//        int perMonth = perWeek * 4;
+//        int perYr = (perMonth * 12) / perPage;
+//        int numOfPages = (int) (perYr * 8);
+//        List<PowerballResult> powerballResults = powerballRestService.getPreviousResults(numOfPages);
+//
+//        System.out.println("Number of Drawings: " + powerballResults.size());
+//
+//        System.out.println("From: " + powerballResults.get(powerballResults.size() - 1).getDate().toString() + " to "
+//                + powerballResults.get(0).getDate().toString());
+//
+//
+//        try (BufferedWriter writer = new BufferedWriter(new FileWriter("powerball_winning_numbers.txt"))) {
+//            for (int i = 0; i < powerballResults.size(); i++) {
+//                PowerballResult powerballResult = powerballResults.get(i);
+//                writer.write(powerballResult.getObjectAsString());
+//                writer.newLine(); // Adds a newline character
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-        System.out.println("Number of Drawings: " + powerballResults.size());
-
-        System.out.println("From: " + powerballResults.get(powerballResults.size() - 1).getDate().toString() + " to "
-                + powerballResults.get(0).getDate().toString());
-
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("powerball_winning_numbers.txt"))) {
-            for (int i = 0; i < powerballResults.size(); i++) {
-                PowerballResult powerballResult = powerballResults.get(i);
-                writer.write(powerballResult.getObjectAsString());
-                writer.newLine(); // Adds a newline character
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        powerballRestService.checkResults(List.of(31, 36, 56, 58, 69), 20, 30);
 
 
 //        Map<Integer, Integer> powerballCounts = new HashMap<>();
@@ -177,5 +187,63 @@ public class PowerballRestService {
         System.out.println("done loading results");
 
         return results;
+    }
+
+    public void checkResults(List<Integer> numbers, int powerBall, int prevDays) {
+
+        List<MegaMillionResult> results = new ArrayList<>();
+
+        final SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(10000);
+        requestFactory.setReadTimeout(10000);
+
+        RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
+        restTemplate.getInterceptors().add(new HttpRequestInterceptor());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        objectMapper.registerModule(new Jdk8Module());
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        StringBuilder url = new StringBuilder("https://www.powerball.com/check-your-numbers?gc=powerball");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Accept", "*/*");
+        headers.add("Accept-Encoding", "*/*");
+
+        HttpEntity<String> requestEntity = null;
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("n", numbers);
+        requestBody.put("b", List.of(powerBall));
+        requestBody.put("days", prevDays);
+        requestBody.put("gc", "powerball");
+
+        try {
+            requestEntity = new HttpEntity<>(objectMapper.writeValueAsString(requestBody), headers);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        MegaMillionResponse resultDto = null;
+        try {
+            ResponseEntity<Map<String, String>> response = restTemplate.exchange(url.toString(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<Map<String, String>>() {
+            });
+
+            // Output results
+            Map<String, String> bodyAsString = response.getBody();
+            System.out.println("bodyAsString: " + bodyAsString);
+//            log.info("bodyAsString={}", bodyAsString);
+            try {
+
+            } catch (Exception e) {
+                System.out.println("Exception1, msg=" + e.getLocalizedMessage());
+            }
+
+        } catch (Exception e) {
+            System.out.println("Exception2, msg=" + e.getLocalizedMessage());
+        }
     }
 }
