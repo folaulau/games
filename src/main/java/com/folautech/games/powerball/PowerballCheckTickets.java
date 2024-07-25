@@ -7,7 +7,7 @@ import java.util.*;
 
 public class PowerballCheckTickets {
 
-    private static final double GRAND_PRIZE      = 10000000.0;
+    private static final double GRAND_PRIZE      = 140000000.0;
 
     public static void main(String[] args) {
 
